@@ -1,11 +1,6 @@
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
+/*
+* Modified from: https://learnopengl.com/In-Practice/2D-Game/Rendering-Sprites
+*/
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "ui_library/Texture.h"

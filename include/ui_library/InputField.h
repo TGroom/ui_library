@@ -459,7 +459,7 @@ public:
                                  std::reference_wrapper<int>, 
                                  std::reference_wrapper<bool>, 
                                  std::reference_wrapper<std::string>>;
-    
+       
     InputField& SetVar(VarType var) {
         mVar = std::make_shared<VarType>(std::move(var));
         std::visit([this](auto&& ref) {
@@ -573,6 +573,8 @@ private:
     std::string mPathDefault = "";
     std::vector<std::string> mPathFilters = { "All Files", "*" };
     bool mPathAllowMultiples = false;
+    std::optional<std::reference_wrapper<std::string>> mStringVarToChange;  // Used for dropdowns
+    const std::vector<std::string>* mReturnOptions = nullptr;   // Used for dropdowns
 
     std::shared_ptr<TextField> mTextField = std::make_shared<TextField>(mUI);
 

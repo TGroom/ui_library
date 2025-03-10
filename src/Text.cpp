@@ -317,31 +317,31 @@ float Text::RenderText(std::wstring text, Boundary textContainer, float z, Align
             float yOffsetH = yOffset + 3.0f;
 
             // Define vertices
-            // Define vertices with flipped y coordinates
             float vertices[18][9] = {
                 // Selection vertices
-                { xOffset,           yOffsetH - mFontSize,   z + 0.0003f, 2.0f, 2.0f, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
-                { xOffset,           yOffsetH,               z + 0.0003f, 2.0f, 2.0f, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
-                { xOffset + wOffset, yOffsetH,               z + 0.0003f, 2.0f, 2.0f, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
-                { xOffset,           yOffsetH - mFontSize,   z + 0.0003f, 2.0f, 2.0f, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
-                { xOffset + wOffset, yOffsetH,               z + 0.0003f, 2.0f, 2.0f, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
-                { xOffset + wOffset, yOffsetH - mFontSize,   z + 0.0003f, 2.0f, 2.0f, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
-
-                // Caret vertices
-                { xOffset,           yOffsetH - mFontSize,   z + 0.0006f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, caretAlpha },
-                { xOffset,           yOffsetH,               z + 0.0006f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, caretAlpha },
-                { xOffset + 1,       yOffsetH,               z + 0.0006f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, caretAlpha },
-                { xOffset,           yOffsetH - mFontSize,   z + 0.0006f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, caretAlpha },
-                { xOffset + 1,       yOffsetH,               z + 0.0006f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, caretAlpha },
-                { xOffset + 1,       yOffsetH - mFontSize,   z + 0.0006f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, caretAlpha },
+                { xOffset,           yOffsetH - mFontSize,   z + 3e-4, 2, 2, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
+                { xOffset,           yOffsetH,               z + 3e-4, 2, 2, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
+                { xOffset + wOffset, yOffsetH,               z + 3e-4, 2, 2, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
+                { xOffset,           yOffsetH - mFontSize,   z + 3e-4, 2, 2, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
+                { xOffset + wOffset, yOffsetH,               z + 3e-4, 2, 2, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
+                { xOffset + wOffset, yOffsetH - mFontSize,   z + 3e-4, 2, 2, selectionColor.r, selectionColor.g, selectionColor.b, bgAlpha },
 
                 // Character vertices
-                { xpos,       ypos - h,   z + 0.0009f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-                { xpos,       ypos,       z + 0.0009f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-                { xpos + w,   ypos,       z + 0.0009f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-                { xpos,       ypos - h,   z + 0.0009f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-                { xpos + w,   ypos,       z + 0.0009f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-                { xpos + w,   ypos - h,   z + 0.0009f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+                { xpos,       ypos - h,   z + 6e-4, 0, 0, 0, 0, 0, 0 },
+                { xpos,       ypos,       z + 6e-4, 0, 1, 0, 0, 0, 0 },
+                { xpos + w,   ypos,       z + 6e-4, 1, 1, 0, 0, 0, 0 },
+                { xpos,       ypos - h,   z + 6e-4, 0, 0, 0, 0, 0, 0 },
+                { xpos + w,   ypos,       z + 6e-4, 1, 1, 0, 0, 0, 0 },
+                { xpos + w,   ypos - h,   z + 6e-4, 1, 0, 0, 0, 0, 0 },
+
+                // Caret vertices
+                { xOffset,           yOffsetH - mFontSize,   z + 9e-4, 2, 2, 1, 1, 1, caretAlpha },
+                { xOffset,           yOffsetH,               z + 9e-4, 2, 2, 1, 1, 1, caretAlpha },
+                { xOffset + 1,       yOffsetH,               z + 9e-4, 2, 2, 1, 1, 1, caretAlpha },
+                { xOffset,           yOffsetH - mFontSize,   z + 9e-4, 2, 2, 1, 1, 1, caretAlpha },
+                { xOffset + 1,       yOffsetH,               z + 9e-4, 2, 2, 1, 1, 1, caretAlpha },
+                { xOffset + 1,       yOffsetH - mFontSize,   z + 9e-4, 2, 2, 1, 1, 1, caretAlpha },
+
             };
 
             glBindTexture(GL_TEXTURE_2D, ch.TextureID);

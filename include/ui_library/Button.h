@@ -20,7 +20,7 @@ class Button : public MouseHandler
 	public:
 		// TODO: Perhaps use glfwGetCursorPos(window, &G_MOUSE_X, &G_MOUSE_Y); in isMouseInBounds to avoid UI injection here
 		Button(UI* _ui, std::shared_ptr<Text> tr, std::wstring _text, Text::Align align = Text::CENTER_MIDDLE,  
-			Boundary container = {0, 0, 50, 20}, int r = 5, float z = 0.0f, int _textx = 0, int _texty = 0, float a = 1.0f,
+			Boundary container = {0, 0, 50, 20}, int r = 5, float z = 0.0f, int _textx = 0, int _texty = 0,
 			Colour _Colour = BUTTON_COLOUR, Colour _HColour = BUTTON_HOVER_COLOUR, Colour _DColour = BUTTON_DISABLED_COLOUR,
 			Colour _DHColour = BUTTON_DISABLED_HOVER_COLOUR);
 		~Button() {};
@@ -57,6 +57,10 @@ class Button : public MouseHandler
 			return *this;
 		}
 
+		void runCallback() {
+			if (onClickCallback) onClickCallback();
+		}
+
 		UI* mUI;
 		Colour mMainColour;
 		Colour mHoverColour;
@@ -73,7 +77,6 @@ class Button : public MouseHandler
 		bool isBold = false;
 		int btnState = 0;
 		std::function<void()> onClickCallback;
-		float mAlpha;
 		int mTriggerEdge = GLFW_PRESS;
 		Text::Align mAlign;
 		State mActiveState = ENABLED;

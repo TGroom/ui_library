@@ -5,8 +5,8 @@
 
 
 Button::Button(UI* _ui, std::shared_ptr<Text> tr, std::wstring _text, Text::Align align, Boundary container,
-    int r, float z, int textx, int texty, float a, Colour _Colour, Colour _HColour, Colour _DColour, Colour _DHColour)
-    : mUI(_ui), mTextRenderer(tr), mMainColour(_Colour), mHoverColour(_HColour), mDisabledColour(_DColour), mDisabledHoverColour(_DHColour), mAlign(align), mRadius(r), mTextx(textx), mTexty(texty), mText(_text), mAlpha(a)
+    int r, float z, int textx, int texty, Colour _Colour, Colour _HColour, Colour _DColour, Colour _DHColour)
+    : mUI(_ui), mTextRenderer(tr), mMainColour(_Colour), mHoverColour(_HColour), mDisabledColour(_DColour), mDisabledHoverColour(_DHColour), mAlign(align), mRadius(r), mTextx(textx), mTexty(texty), mText(_text)
     {
     mZ = z;
     mContainer = container;
@@ -59,7 +59,6 @@ void Button::Draw(){
     } else {
         rectPrim.SetColour(isBold ? mDisabledHoverColour : mDisabledColour);
     }
-    rectPrim.SetAlpha(mAlpha);
 	rectPrim.Draw();
 
 	glm::ivec2 boundingBox = mTextRenderer->boundingBox(mText);

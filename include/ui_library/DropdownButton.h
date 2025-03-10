@@ -17,7 +17,7 @@
 class DropdownButton : public Button {
 public:
     DropdownButton(UI* _ui, std::shared_ptr<Text> tr, std::wstring _text, Text::Align align = Text::CENTER_MIDDLE, Boundary container = {0, 0, 50, 20},
-                   int r = 5, float z = 0.0f, int _textx = 0, int _texty = 0, float a = 1.0f, Colour _Colour = BUTTON_COLOUR,
+                   int r = 5, float z = 0.0f, int _textx = 0, int _texty = 0, Colour _Colour = BUTTON_COLOUR,
 			Colour _HColour = BUTTON_HOVER_COLOUR, Colour _DColour = BUTTON_DISABLED_COLOUR, Colour _DHColour = BUTTON_DISABLED_HOVER_COLOUR);
 
     //void Register() override;

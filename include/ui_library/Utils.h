@@ -63,6 +63,8 @@ extern unsigned char G_DRAG_CURSOR_BITMAP[15*25*4];
 
 class UI {
 public:
+    UI() {};
+    ~UI() {};
 	int G_WIDTH = 800;
 	int G_HEIGHT = 800;
 	double G_MOUSE_X = 0;
@@ -81,7 +83,7 @@ public:
 	int G_MOUSE_DRAG_END_X = -1;
 	int G_MOUSE_DRAG_END_Y = -1;
 	bool G_MIDDLE_MOUSE_DRAG = false;
-	glm::vec2 G_MOUSE_DRAG_DELTA;
+	glm::vec2 G_MOUSE_DRAG_DELTA = glm::vec2(0.0f, 0.0f);
 	int G_SET_CURSOR = 0;
 	int G_SET_CURSOR_MODE = GLFW_CURSOR_NORMAL;
 
@@ -130,6 +132,8 @@ struct Colour {
 
     // Single value constructor, sets all components to the same value
     Colour(GLfloat value) : r(value), g(value), b(value), a(1.0f) {}
+
+    Colour(Colour c, GLfloat value) : r(c.r), g(c.g), b(c.b), a(value) {}
 
 	// Division operator
     Colour operator/(GLfloat value) const {
@@ -419,63 +423,7 @@ struct Boundary{
 };
 
 
-class Primitive
-{
-public:
-	Primitive();
-	~Primitive(){};
-
-	Primitive& Rect(int xtl, int ytl, int w, int h, int r, float z = 0.0f);
-	//void SetZOffset(GLfloat z);
-	Primitive& SetColour(Colour c);
-	Primitive& SetAlpha(float a);
-	Primitive& Draw();
-	Primitive& SetCorners(std::vector<bool> corners) { mCorners = corners; return *this; };
-
-private:
-	std::vector<bool> mCorners = {true, true, true, true};
-	Shape target;
-
-	VAO VAO1;
-	VBO VBO1;
-	EBO EBO1;
-
-    bool isValid = false;
-	GLfloat mZ = 0.0f;
-	Shader shaderProgram;
-	GLuint uMVPMatrixID;
-	//float mMVPMatrix[16] = {0.01f,	0.0f,	0.0f,	0.0f,
-	//						0.0f,  -0.01f,	0.0f,	0.0f,
-	//						0.0f,	0.0f,	1.0f,	0.0f,
-	//					   -1.0f,	1.0f,	0.0f,	1.0f};
-
-    glm::mat4 mMVPMatrix;
-
-	void Arc(int x, int y, int r, float begin, float end, float step);
-	void AddVert(GLfloat x, GLfloat y);
-	void CalcInds();
-	void UpdateMVPMatrix();
-};
-
-
-class WorkspaceComponent {
-public:
-	WorkspaceComponent() {}
-    virtual ~WorkspaceComponent() {}
-
-    // Common interface method for all components
-    //virtual void Register() = 0;
-    virtual void Draw() = 0;
-
-};
-
 bool isMouseInBounds(UI* _ui, Boundary* bounds, int margin = 0, int pos_x = -1, int pos_y = -1);
-
-
-void addVertex(std::vector<GLfloat>& vertices,
-               float x, float y, float z,
-               float u, float v,
-               float nx, float ny, float nz);
 
 
 class MouseHandler {
@@ -517,43 +465,9 @@ public:
         return instance;
     }
 
-    void grantMouseInput(UI* _ui) {
-        const auto& elements = MouseHandler::getInstances();
-        if (elements.empty()) return;
+    void grantMouseInput(UI* _ui);
 
-        // Map each layer to the MouseHandler with the highest mZ in that layer.
-        std::unordered_map<int, MouseHandler*> highestInLayer;
-        for (auto* elem : elements) {
-            if (!elem->isDrawn) continue;
-            if (!isMouseInBounds(_ui, &elem->mContainer)) continue;
-
-            int currentLayer = elem->layer;
-            auto it = highestInLayer.find(currentLayer);
-            if (it == highestInLayer.end() || elem->mZ > it->second->mZ) {
-                highestInLayer[currentLayer] = elem;
-            }
-        }
-
-        selectedCallbacks.clear();
-        // For each layer, add the highest z element.
-        for (const auto& pair : highestInLayer) {
-            selectedCallbacks.push_back(pair.second);
-        }
-
-        // Invoke callbacks for each selected element.
-        for (auto* handler : selectedCallbacks) {
-            if (handler)
-                handler->MouseCallback(_ui->G_LEFT_MOUSE_STATE);
-        }
-        resetMouseInput();
-    }
-
-    void resetMouseInput() {
-        for (auto* elem : MouseHandler::getInstances()) {
-            elem->isDrawn = false;
-        }
-        selectedCallbacks.clear();
-    }
+    void resetMouseInput();
 
 private:
     MouseInputSingleton() {}
@@ -565,3 +479,53 @@ private:
     void operator=(const MouseInputSingleton&) = delete;
 };
 
+
+class Primitive : public MouseHandler 
+{
+public:
+	Primitive();
+	~Primitive(){};
+
+	Primitive& Rect(int xtl, int ytl, int w, int h, int r, float z = 0.0f);
+	//void SetZOffset(GLfloat z);
+	Primitive& SetColour(Colour c);
+	Primitive& SetAlpha(float a);
+	Primitive& Draw();
+	Primitive& SetCorners(std::vector<bool> corners) { mCorners = corners; return *this; };
+
+private:
+	std::vector<bool> mCorners = {true, true, true, true};
+	Shape target;
+
+	VAO VAO1;
+	VBO VBO1;
+	EBO EBO1;
+
+    bool isValid = false;
+	Shader shaderProgram;
+	GLuint uMVPMatrixID;
+    glm::mat4 mMVPMatrix;
+
+	void Arc(int x, int y, int r, float begin, float end, float step);
+	void AddVert(GLfloat x, GLfloat y);
+	void CalcInds();
+	void UpdateMVPMatrix();
+};
+
+
+class WorkspaceComponent {
+public:
+	WorkspaceComponent() {}
+    virtual ~WorkspaceComponent() {}
+
+    // Common interface method for all components
+    //virtual void Register() = 0;
+    virtual void Draw() = 0;
+
+};
+
+
+void addVertex(std::vector<GLfloat>& vertices,
+               float x, float y, float z,
+               float u, float v,
+               float nx, float ny, float nz);

@@ -1,4 +1,6 @@
-// Modified from: https://github.com/VictorGordan/opengl-tutorials
+/*
+*  Modified from : https://github.com/VictorGordan/opengl-tutorials
+*/
 
 #include "ui_library/VBO.h"
 

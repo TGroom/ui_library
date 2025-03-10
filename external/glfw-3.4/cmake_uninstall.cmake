@@ -1,9 +1,9 @@
 
-if (NOT EXISTS "C:/Users/Thomas Groom/Desktop/GSplatProject/external/glfw-3.4/install_manifest.txt")
-    message(FATAL_ERROR "Cannot find install manifest: \"C:/Users/Thomas Groom/Desktop/GSplatProject/external/glfw-3.4/install_manifest.txt\"")
+if (NOT EXISTS "C:/Dev/PhDApp/external/ui_library/external/glfw-3.4/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: \"C:/Dev/PhDApp/external/ui_library/external/glfw-3.4/install_manifest.txt\"")
 endif()
 
-file(READ "C:/Users/Thomas Groom/Desktop/GSplatProject/external/glfw-3.4/install_manifest.txt" files)
+file(READ "C:/Dev/PhDApp/external/ui_library/external/glfw-3.4/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 
 foreach (file ${files})

@@ -5,6 +5,9 @@
 
 GLFWwindow* G_WINDOW;   // TODO: Avoid global definition
 
+std::vector<MouseHandler*> MouseHandler::instances;
+
+
 // Helper functions to convert between std::wstring and UTF-8 std::string.
 std::string wstring_to_utf8(const std::wstring& wstr) {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
@@ -36,10 +39,10 @@ Primitive::Primitive() {
 
 // Rounded rectangle primitive
 Primitive& Primitive::Rect(int xtl, int ytl, int w, int h, int r, float z) {
+    mContainer = {xtl, ytl, w, h};
+    mZ = z;
 	int xbr = xtl + w;
 	int ybr = ytl + h;
-
-	mZ = static_cast<GLfloat>(z);
 
     if (w > 0 && h > 0) {
         isValid = true;
@@ -91,6 +94,7 @@ Primitive& Primitive::SetAlpha(float a){
 
 Primitive& Primitive::Draw() {
     if (isValid) {
+        isDrawn = true;
         shaderProgram.Bind();
         VAO1.Bind();
         VBO1.Data(target.verts);
@@ -164,11 +168,6 @@ void Primitive::UpdateMVPMatrix() {
     float scaleWidth = 2.0f / static_cast<float>(wWidth);
     float scaleHeight = -2.0f / static_cast<float>(wHeight);
 
-    // Initialize the MVP matrix in one go
-    //mMVPMatrix[0]  = scaleWidth; mMVPMatrix[1]  = 0.0f;        mMVPMatrix[2]  = 0.0f;  mMVPMatrix[3]  = 0.0f;
-    //mMVPMatrix[4]  = 0.0f;       mMVPMatrix[5]  = scaleHeight; mMVPMatrix[6]  = 0.0f;  mMVPMatrix[7]  = 0.0f;
-    //mMVPMatrix[8]  = 0.0f;       mMVPMatrix[9]  = 0.0f;        mMVPMatrix[10] = 1.0f;  mMVPMatrix[11] = 0.0f;
-    //mMVPMatrix[12] = -1.0f;      mMVPMatrix[13] = 1.0f;        mMVPMatrix[14] = 0.0f;  mMVPMatrix[15] = 1.0f;
     mMVPMatrix = glm::ortho(0.0f, static_cast<float>(wWidth), static_cast<float>(wHeight), 0.0f, -1.0f, 1.0f);
     
 }
@@ -202,8 +201,47 @@ void addVertex(std::vector<GLfloat>& vertices,
 }
 
 
-// Define static member
-std::vector<MouseHandler*> MouseHandler::instances;
+
+
+void MouseInputSingleton::grantMouseInput(UI* _ui) {
+    const auto& elements = MouseHandler::getInstances();
+    if (elements.empty()) return;
+
+    // Map each layer to the MouseHandler with the highest mZ in that layer.
+    std::unordered_map<int, MouseHandler*> highestInLayer;
+    for (auto* elem : elements) {
+        if (!elem->isDrawn) continue;
+        if (!isMouseInBounds(_ui, &elem->mContainer)) continue;
+
+        int currentLayer = elem->layer;
+        auto it = highestInLayer.find(currentLayer);
+        if (it == highestInLayer.end() || elem->mZ > it->second->mZ) {
+            highestInLayer[currentLayer] = elem;
+        }
+    }
+
+    selectedCallbacks.clear();
+    // For each layer, add the highest z element.
+    for (const auto& pair : highestInLayer) {
+        selectedCallbacks.push_back(pair.second);
+    }
+
+    // Invoke callbacks for each selected element.
+    for (auto* handler : selectedCallbacks) {
+        if (handler)
+            handler->MouseCallback(_ui->G_LEFT_MOUSE_STATE);
+    }
+    resetMouseInput();
+}
+
+void MouseInputSingleton::resetMouseInput() {
+    for (auto* elem : MouseHandler::getInstances()) {
+        elem->isDrawn = false;
+    }
+    selectedCallbacks.clear();
+}
+
+
 
 
 unsigned char G_DRAG_CURSOR_BITMAP[15*25*4] = {

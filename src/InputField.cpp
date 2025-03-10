@@ -16,7 +16,7 @@ InputField::InputField(UI* _ui, std::shared_ptr<Text> tr, std::string label, Inp
 
     mCheckboxIconTrue = std::make_shared<Texture2D>(GL_RGBA, GL_RGBA, std::filesystem::path(std::string(UI_LIBRARY_RESOURCES_DIR) + "/icons/checkmark.png"), glm::vec2(20));
 
-    dropDownBtn = new DropdownButton(mUI, mTextRenderer, L"", Text::LEFT_MIDDLE, {0, 0, 140, 20}, 5, mZ + 0.003f, mTextMarginX, 0, 1.0f, BUTTON_COLOUR, FIELD_HOVER_COLOUR, BUTTON_DISABLED_COLOUR, FIELD_DISABLED_HOVER_COLOUR);
+    dropDownBtn = new DropdownButton(mUI, mTextRenderer, L"", Text::LEFT_MIDDLE, {0, 0, 140, 20}, 5, mZ + 0.003f, mTextMarginX, 0, BUTTON_COLOUR, FIELD_HOVER_COLOUR, BUTTON_DISABLED_COLOUR, FIELD_DISABLED_HOVER_COLOUR);
     dropDownBtn->SetReflectSelectedOption(true);
     
     if (mType == DOUBLE) {
@@ -290,6 +290,9 @@ void InputField::Draw(int x, int y, int width, int height, std::optional<float> 
         dropDownBtn->SetActiveOption(mIntValue);
         dropDownBtn->setState(mState);
         dropDownBtn->Draw();
+        if (mStringVarToChange.has_value() && !mReturnOptions->empty()) {
+            mStringVarToChange.value().get() = (*mReturnOptions)[mIntValue];
+        }
     }
 
     mMouseInBounds = false;
@@ -420,29 +423,17 @@ InputField& InputField::SetOptions(
     const std::vector<std::string>& return_options,
     std::optional<std::reference_wrapper<std::string>> stringVarToChange) {
 
-    bool mOptionStringVar = false;
-    if (!return_options.empty()) {
-        mOptionStringVar = true;
-    }
+    mReturnOptions = &return_options;
+    if (stringVarToChange.has_value()) mStringVarToChange = stringVarToChange.value();
 
     if (mType == DROPDOWN) {
         optionBtns.clear();
         int i = 0;
         for (const auto& opt : options) {
-            std::shared_ptr<Button> btn = std::make_shared<Button>(mUI, mTextRenderer, StringToWString(opt), Text::LEFT_MIDDLE, Boundary(0, 0, 20, 20), 5, mZ + 0.004f, 5, 0, 1.0f);
-            if (mOptionStringVar) {
-                btn->SetOnClickCallback([this, i, &return_options, stringVarToChange]() {
-                    if (stringVarToChange.has_value()) {
-                        stringVarToChange.value().get() = return_options[i];
-                    }
-                    this->SetValue(i);
-                });
-            }
-            else {
-                btn->SetOnClickCallback([this, i]() {
-                    this->SetValue(i);
-                });
-            }
+            std::shared_ptr<Button> btn = std::make_shared<Button>(mUI, mTextRenderer, StringToWString(opt), Text::LEFT_MIDDLE, Boundary(0, 0, 20, 20), 5, mZ + 0.004f, 5, 0);
+            btn->SetOnClickCallback([this, i]() {
+                this->SetValue(i);
+            });
             optionBtns.push_back(btn);
             i++;
         }
@@ -452,7 +443,7 @@ InputField& InputField::SetOptions(
         optionBtns.clear();
         int i = 0;
         for (std::string opt : options) {
-            std::shared_ptr<Button> btn = std::make_shared<Button>(mUI, mTextRenderer, StringToWString(opt), Text::CENTER_MIDDLE, Boundary(0, 0, 20, 20), 5, mZ + 0.004f, 0, 0, 1.0f, mDefaultColour, mHoverColour, mDisabledColour, mDisabledHoverColour);
+            std::shared_ptr<Button> btn = std::make_shared<Button>(mUI, mTextRenderer, StringToWString(opt), Text::CENTER_MIDDLE, Boundary(0, 0, 20, 20), 5, mZ + 0.004f, 0, 0, mDefaultColour, mHoverColour, mDisabledColour, mDisabledHoverColour);
             btn->SetOnClickCallback([this, i]() {this->SetValue(i + mOptionsStartOffset);});
             btn->setCorners({i == 0, i == (options.size() - 1), i == (options.size() - 1), i == 0});
             optionBtns.push_back(btn);

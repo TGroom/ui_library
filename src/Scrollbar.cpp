@@ -34,7 +34,8 @@ void Scrollbar::Draw(Boundary scrollContainer, int fullHeight, Colour col) {
             mContainer.x + mContainer.width - mScrollBoxWidth - 1,
             mContainer.y + (mContainer.height * scrollOffset) / fullHeight + mVertMargin, mScrollBoxWidth,
             (mContainer.height * mContainer.height) / fullHeight - (mVertMargin * 2) + 1
-        ).SetZ(1.0f);
+        );
+        mScrollBoxButton->SetZ(mZ);
         mScrollBoxButton->Draw();
     }
 }
